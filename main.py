@@ -7,26 +7,28 @@ def potentialShape(chi):
     potential=(chi**2-chi_zero**2)**2
     return(potential)
 
-def localPotential(pos):
+def localPotential(pos, vel, dt):
     chi_zero=1
-    positive=np.arange(pos, pos+0.1, 0.01)
-    negative = np.arange(pos-0.1, pos, 0.01)
-    local=np.append(np.flip(negative),positive)
+    step=0.01
+    diff=0.1
+    positive=np.arange(pos, pos+diff, step)
+    negative = np.arange(pos-diff, pos-step, step)
+    local=np.append(negative,positive)
     
     potential=(local**2-chi_zero**2)**2
     return(potential)
 
-def getAcc(position):
+def getAcc(position, vel, dt):
     #get local potential shape
-    potential=localPotential(position)
+    potential=localPotential(position, vel, dt)
 
     acc=-np.gradient(potential)
-    acc_local=acc[int(len(acc)/2)]
+    acc_local=acc[int(len(acc)/2)+1]
     return(acc_local)
 
 #parameters
-Nt=10    #ammount of time
-dt= 0.05    #time step
+Nt=100  #ammount of time
+dt= 0.1    #time step
 plotRealTime=True
 #total simulation length
 tot=int(Nt/dt)
@@ -39,7 +41,7 @@ pos_save[0]=chi_pos
 pot_save=np.zeros((tot,1))  #potential record
 pot_save[0]=potentialShape(chi_pos)
 #calculate initial acceleration
-chi_acc=getAcc(chi_pos)
+chi_acc=getAcc(chi_pos,chi_vel,dt)
 
 #set up figure
 fig=plt.figure(dpi=80)
@@ -52,9 +54,8 @@ for i in range(tot):
     chi_pos+=chi_vel*dt
     pos_save[i]=chi_pos
     pot_save[i]=potentialShape(chi_pos)
-    
     #get acc
-    chi_acc=getAcc(chi_pos)
+    chi_acc=getAcc(chi_pos, chi_vel, dt)
     #kick
     chi_vel+=chi_acc*dt/2
     #run plot updater
@@ -66,7 +67,6 @@ for i in range(tot):
         plt.scatter(x,y)
         ax.set(xlim=(-5,5), ylim=(0,10))
         ax.set_aspect('equal','box')
-        plt.pause(0.001)
-
-print(pot_save)
-# %%
+        plt.pause(0.1)
+    print(chi_vel)
+    
