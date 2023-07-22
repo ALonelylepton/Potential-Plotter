@@ -10,16 +10,16 @@ plotRealTime=True
 #total simulation length
 tot=int(Nt/dt)
 #initial conditions
-chi_pos=2
-chi_vel=0.01
+chi_pos, chi_vel=2, 0.01
+phi_pos, phi_vel=2,0.01
 #trajectory records
-pos_save=np.zeros((tot,1))  #chi position record
-pos_save[0]=chi_pos
-pot_save=np.zeros((tot,1))  #potential record
+pos_save=np.zeros((tot,2))  #chi position record
+pos_save[0][0], pos_save[0][1]=chi_pos, phi_pos
+pot_save=np.zeros((tot,2))  #potential record
 pot_save[0]=func.potentialShape(chi_pos)
 #calculate initial acceleration
-chi_acc=func.getAcc(chi_pos,chi_vel,dt)
-
+chi_acc, phi_acc=func.getAcc(chi_pos,chi_vel, phi_pos, phi_vel, dt)
+#%%
 #set up figure
 fig=plt.figure(dpi=80)
 grid=plt.GridSpec(3,1,wspace=0.0,hspace=0.03)
