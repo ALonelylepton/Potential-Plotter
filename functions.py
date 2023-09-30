@@ -29,5 +29,29 @@ def getAcc(pos, vel, dt):
     '''
     need to add -3*H*vel
     '''
-    
     return(acc_local)
+
+def potentialShape2d(pos):
+    c=10
+    #potential = pos**2
+    potential=(1-np.exp(-pos*c))*np.heaviside(pos+1, 1)
+    return(potential)
+
+def getAcc2d(pos, vel, dt):
+    #get local potential shape
+    potential=localPotential2d(pos, vel, dt)
+    #get hubble parameter
+    H=np.sqrt((potential+vel**2/2)/3)
+    #get acceleration 0 is chi, 1 is phi
+    acc_local=np.gradient(potential)*-1
+    '''
+    need to add -3*H*vel
+    '''
+    return(acc_local[1])
+
+def localPotential2d(pos, vel, dt):
+    c=10
+    pos=np.array([pos-dt/2,pos,pos+dt/2])
+    #potential = pos**2
+    potential= (1-np.exp(-pos*c))*np.heaviside(pos+1, 1)
+    return(potential)
